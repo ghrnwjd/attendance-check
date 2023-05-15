@@ -1,77 +1,87 @@
+let year;
+let month;
+let date;
+
+let ghrnwjd;
+let mmmjunjoy;
+let cmsxi;
+let erica0321;
+
 function init() {
     let today = new Date();
 
-    let year = today.getFullYear();
-    let month = today.getMonth() + 1;
-    let date = today.getDate();
+    year = today.getFullYear();
+    month = today.getMonth() + 1;
+    date = today.getDate();
 
-    let ghrnwjd = false;
-    let mmmjunjoy = false;
-    let cmsxi = false;
-    let erica0321 = false;
+    ghrnwjd = false;
+    mmmjunjoy = false;
+    cmsxi = false;
+    erica0321 = false;    
+}
 
-    fetch("https://api.github.com/repos/ghrnwjd/ghrnwjd/commits")
-  .then((response) => response.json())
-  .then((data) => {
+fetch("https://api.github.com/repos/ghrnwjd/ghrnwjd/commits")
+.then((response) => response.json())    
+.then((data) => {
     let sen = "정호영은 " + attendanceCheck(data);
     let node = document.createElement("p");
     node.textContent = sen;
     document.getElementById("ghrnwjd").appendChild(node);
-    ghrnwjd = true;
+    ghrnwjd = true; 
 })
-.catch((data) => {
+.catch((error) => {
     let node = document.createElement("p");
     node.textContent = "정호영은 아직 출석하지 못했습니다.";
     document.getElementById("ghrnwjd").appendChild(node);
-  });
+});
+
 
 fetch("https://api.github.com/repos/mmmjunjoy/mmmjunjoy/commits")
-  .then((response) => response.json())
-  .then((data) => {
+.then((response) => response.json())
+.then((data) => {
     let sen = "심준보는 " + attendanceCheck(data);
     let node = document.createElement("p");
     node.textContent = sen;
     document.getElementById("mmmjunjoy").appendChild(node);
     mmmjunjoy = true;
-    })
-  .catch((data) => {
+})
+.catch((error) => {
     let node = document.createElement("p");
     node.textContent = "심준보는 아직 출석하지 못했습니다.";
     document.getElementById("mmmjunjoy").appendChild(node);
-  });
+});
 
 fetch("https://api.github.com/repos/cmsxi/cmsxi/commits")
-  .then((response) => response.json())
-  .then((data) => {
-    let sen = "최민서는 " + attendanceCheck(data);
-    let node = document.createElement("p");
-    node.textContent = sen;
-    document.getElementById("cmsxi").appendChild(node);
-    cmsxi = true;
+.then((response) => response.json())
+.then((data) => {
+let sen = "최민서는 " + attendanceCheck(data);
+let node = document.createElement("p");
+node.textContent = sen;
+document.getElementById("cmsxi").appendChild(node);
+cmsxi = true;
 })
-.catch((data) => {
+.catch((error) => {
     let node = document.createElement("p");
     node.textContent = "최민서는 아직 출석하지 못했습니다.";
     document.getElementById("cmsxi").appendChild(node);
-  });
+    
+});
+
 
 fetch("https://api.github.com/repos/erica0321/erica0321/commits")
-  .then((response) => response.json())
-  .then((data) => {
+.then((response) => response.json())
+.then((data) => {
     let sen = "노현아는 " + attendanceCheck(data);
     let node = document.createElement("p");
     node.textContent = sen;
     document.getElementById("erica0321").appendChild(node);
     erica0321 = true;
 })
-  .catch((data) => {
+.catch((error) => {
     let node = document.createElement("p");
     node.textContent = "노현아는 아직 출석하지 못했습니다.";
     document.getElementById("erica0321").appendChild(node);
-  }); 
-
-}
-
+});
 
 function attendanceCheck(x) {
     x = x[0].commit.author.date
