@@ -1,11 +1,6 @@
-let year;
-let month;
-let date;
+let year, month, date;
+let ghrnwjd, mmmjunjoy, cmsxi, erica0321;
 
-let ghrnwjd;
-let mmmjunjoy;
-let cmsxi;
-let erica0321;
 
 function init() {
     let today = new Date();
@@ -17,87 +12,110 @@ function init() {
     ghrnwjd = false;
     mmmjunjoy = false;
     cmsxi = false;
-    erica0321 = false;    
+    erica0321 = false;
+    
+
+    ghrnwjdAPI();
+    junjoyAPI();
+    xiAPI();
+    noAPI();
 }
 
-fetch("https://api.github.com/repos/ghrnwjd/ghrnwjd/commits")
-.then((response) => response.json())    
-.then((data) => {
-    let sen = "정호영은 " + attendanceCheck(data);
-    let node = document.createElement("p");
-    node.textContent = sen;
-    document.getElementById("ghrnwjd").appendChild(node);
-    ghrnwjd = true; 
-})
-.catch((error) => {
-    let node = document.createElement("p");
-    node.textContent = "정호영은 아직 출석하지 못했습니다.";
-    document.getElementById("ghrnwjd").appendChild(node);
-});
+function ghrnwjdAPI() {
+    fetch("https://api.github.com/repos/ghrnwjd/ghrnwjd/commits")
+    .then((response) => response.json())    
+    .then((data) => {
+        let node = attendanceCheck(data);
+        document.getElementById("ghrnwjd").appendChild(node);
+        ghrnwjd = true; 
+    })
+    .catch((error) => {
+        let node = document.createElement("p");
+        node.textContent = "정호영은 아직 출석하지 못했습니다.";
+        document.getElementById("ghrnwjd").appendChild(node);
+    });
+}
 
 
-fetch("https://api.github.com/repos/mmmjunjoy/mmmjunjoy/commits")
-.then((response) => response.json())
-.then((data) => {
-    let sen = "심준보는 " + attendanceCheck(data);
-    let node = document.createElement("p");
-    node.textContent = sen;
-    document.getElementById("mmmjunjoy").appendChild(node);
-    mmmjunjoy = true;
-})
-.catch((error) => {
-    let node = document.createElement("p");
-    node.textContent = "심준보는 아직 출석하지 못했습니다.";
-    document.getElementById("mmmjunjoy").appendChild(node);
-});
+function junjoyAPI() {
+    fetch("https://api.github.com/repos/mmmjunjoy/mmmjunjoy/commits")
+    .then((response) => response.json())
+    .then((data) => {
+        let node = attendanceCheck(data);
+        document.getElementById("mmmjunjoy").appendChild(node);
+        mmmjunjoy = true;
+    })
+    .catch((error) => {
+        let node = document.createElement("p");
+        node.textContent = "심준보는 아직 출석하지 못했습니다.";
+        document.getElementById("mmmjunjoy").appendChild(node);
+    });
+}
 
-fetch("https://api.github.com/repos/cmsxi/cmsxi/commits")
-.then((response) => response.json())
-.then((data) => {
-let sen = "최민서는 " + attendanceCheck(data);
-let node = document.createElement("p");
-node.textContent = sen;
-document.getElementById("cmsxi").appendChild(node);
-cmsxi = true;
-})
-.catch((error) => {
-    let node = document.createElement("p");
-    node.textContent = "최민서는 아직 출석하지 못했습니다.";
-    document.getElementById("cmsxi").appendChild(node);
-    
-});
+function xiAPI() {
+    fetch("https://api.github.com/repos/cmsxi/cmsxi/commits")
+    .then((response) => response.json())
+    .then((data) => {
+        let node = attendanceCheck(data);
+        document.getElementById("cmsxi").appendChild(node);
+        cmsxi = true;
+    })
+    .catch((error) => {
+        let node = document.createElement("p");
+        node.textContent = "최민서는 아직 출석하지 못했습니다.";
+        document.getElementById("cmsxi").appendChild(node);
+        
+    });
+}
 
 
-fetch("https://api.github.com/repos/erica0321/erica0321/commits")
-.then((response) => response.json())
-.then((data) => {
-    let sen = "노현아는 " + attendanceCheck(data);
-    let node = document.createElement("p");
-    node.textContent = sen;
-    document.getElementById("erica0321").appendChild(node);
-    erica0321 = true;
-})
-.catch((error) => {
-    let node = document.createElement("p");
-    node.textContent = "노현아는 아직 출석하지 못했습니다.";
-    document.getElementById("erica0321").appendChild(node);
-});
+function noAPI() {
+    fetch("https://api.github.com/repos/erica0321/erica0321/commits")
+    .then((response) => response.json())
+    .then((data) => {
+        let node = attendanceCheck(data);
+        document.getElementById("erica0321").appendChild(node);
+        erica0321 = true;
+    })
+    .catch((error) => {
+        let node = document.createElement("p");
+        node.textContent = "노현아는 아직 출석하지 못했습니다.";
+        document.getElementById("erica0321").appendChild(node);
+    });
+}
+
+
+
+
 
 function attendanceCheck(x) {
     x = x[0].commit.author.date
-    x = x.substr(0, 10);
-    year_month_day = x.split('-');
+    let temp = x.substr(0, 10);
+    
+    let hour = parseInt(x.substr(11, 13));
+    let minutes = parseInt(x.substr(14,16));
 
+    year_month_day = temp.split('-');       
+    
     let today_year = parseInt(year_month_day[0]);
     let today_month = parseInt(year_month_day[1]);
     let today_date = parseInt(year_month_day[2]);
+
+    let gitTime = setLocalTime(today_year, today_month, today_date, hour);
     
+    console.log(gitTime[1] + "월 " + gitTime[2] + "일 " + gitTime[3] +"시 " + minutes);
+
+    let node = document.createElement("div");
     
-    if(year === today_year && month === today_month && date === today_date) {
-        return "출석 하였습니다.";
+
+    if(year === gitTime[0] && month === gitTime[1] && date === gitTime[2]) {
+        node.innerHTML = "출석 하였습니다.<br/>최근 커밋 시간은 "+ gitTime[1] + "월 " + gitTime[2] + "일 " + gitTime[3] +"시 " + minutes + "분" + "입니다. ";;
+    }
+    else{
+        node.innerHTML = "아직 출석하지 못했습니다.<br/> 최근 커밋 시간은 "+ gitTime[1] + "월 " + gitTime[2] + "일 " + gitTime[3] +"시 " + minutes + "분" + "입니다.";
     }
 
-    return "아직 출석하지 못했습니다.";
+    return node;
 }
 
 function createFile() {
@@ -164,5 +182,20 @@ function updateFile(ghrnwjd_contents, mmmjunjoy_contents, cmsxi_contents, erica0
 
 }
 
-init();
+
 // readFile();
+
+function setLocalTime(year, month, date, hour) {
+    var gitDate = new Date(year, month -1, date, hour);
+
+    var localDate = new Date(gitDate.getTime() + (9 * 60 * 60 * 1000));
+
+    var localYear = localDate.getFullYear();
+    var localMonth = localDate.getMonth() + 1;
+    var localDay = localDate.getDate();
+    var localHour = localDate.getHours();
+
+    return [localYear, localMonth, localDay, localHour];
+}
+
+init();
