@@ -2,6 +2,8 @@
 
 
 ### 사용한 API
-git contribution: `"https://ghchart.rshah.org/{githubId}"`
+git contribution: `https://ghchart.rshah.org/{owner}`
 <br><br>
-git commit log: `"https://api.github.com/repos/{githubId}/{githubId}/commits"`
+git commit log: `https://api.github.com/repos/{owner}/{repo}/commits`
+<br><br>
+git repo list: `https://api.github.com/users/{owner}/repos`
