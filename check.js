@@ -1,6 +1,70 @@
 let year, month, date;
-let ghrnwjd, mmmjunjoy, cmsxi, erica0321;
+let ghrnwjd, mmmjunjoy, cmsxi, erica0321, ddanbee, youngsu;
 
+let ghrnwjd_repos, mmmjunjoy_repos, cmsxi_repos, erica0321_repos, ddanbee_repos, youngsu_repos;
+
+function getRepos() {    
+    fetch("https://api.github.com/users/ghrnwjd/repos")
+    .then((response) => response.json())    
+    .then((data) => {
+        ghrnwjd_repos = getReposName(data);    
+    })
+    .catch((error) => {
+        console.log(error)
+    });
+    
+
+    fetch("https://api.github.com/users/mmmjunjoy/repos")
+    .then((response) => response.json())    
+    .then((data) => {
+        mmmjunjoy_repos = getReposName(data);    
+    })
+    .catch((error) => {
+        console.log(error)
+    });   
+
+    fetch("https://api.github.com/users/cmsxi/repos")
+    .then((response) => response.json())    
+    .then((data) => {
+        cmsxi_repos = getReposName(data);    
+    })
+    .catch((error) => {
+        console.log(error)
+    });   
+
+    fetch("https://api.github.com/users/erica0321/repos")
+    .then((response) => response.json())    
+    .then((data) => {
+        erica0321_repos = getReposName(data);    
+    })
+    .catch((error) => {
+        console.log(error)
+    });   
+
+    fetch("https://api.github.com/users/ddanbee/repos")
+    .then((response) => response.json())    
+    .then((data) => {
+        ddanbee_repos = getReposName(data);    
+    })
+    .catch((error) => {
+        console.log(error)
+    });   
+
+    fetch("https://api.github.com/users/youngsu/repos")
+    .then((response) => response.json())    
+    .then((data) => {
+        youngsu_repos = getReposName(data);    
+    })
+    .catch((error) => {
+        console.log(error)
+    });   
+}
+
+function getReposName(data) {
+    let repo = []
+
+    repo.push()
+}
 
 function init() {
     let today = new Date();
@@ -13,75 +77,113 @@ function init() {
     mmmjunjoy = false;
     cmsxi = false;
     erica0321 = false;
+    ddanbee = false;
+    youngsu = false;
     
 
     ghrnwjdAPI();
     junjoyAPI();
     xiAPI();
     noAPI();
+    ddanbeeAPI();
+    youngsuAPI();
+}
+
+
+function ddanbeeAPI() {
+    for(i = 0; i < ddanbee_repos.length; i++) {   
+        fetch(`https://api.github.com/repos/ddanddanbee/${ddanbee_repos[i]}/commits`)
+        .then((response) => response.json())    
+        .then((data) => {
+            let node = attendanceCheck(data);
+            document.getElementById("ddanbee").appendChild(node);
+            ddanbee = true;
+        
+        })
+        .catch((error) => {
+            console.log(`${ddanbee_repos[i]} 레포의 커밋은 없습니다.`)
+        });
+    }
+}
+
+function youngsuAPI() {
+    for(i = 0; i < youngsu_repos.length; i++) {
+        fetch(`https://api.github.com/repos/0su1327/${youngsu_repos[i]}/commits`)
+        .then((response) => response.json())    
+        .then((data) => {
+            let node = attendanceCheck(data);
+            document.getElementById("youngsu").appendChild(node);       
+            youngsu = true;
+        })
+        .catch((error) => {
+            console.log(`${ddanbee_repos[i]} 레포의 커밋은 없습니다.`)
+        });
+    }
 }
 
 function ghrnwjdAPI() {
-    fetch("https://api.github.com/repos/ghrnwjd/ghrnwjd/commits")
-    .then((response) => response.json())    
-    .then((data) => {
-        let node = attendanceCheck(data);
-        document.getElementById("ghrnwjd").appendChild(node);
-        ghrnwjd = true; 
-    })
-    .catch((error) => {
-        let node = document.createElement("p");
-        node.textContent = "정호영은 아직 출석하지 못했습니다.";
-        document.getElementById("ghrnwjd").appendChild(node);
-    });
+    for(i = 0; i < ghrnwjd_repos.length; i++) {
+        fetch(`https://api.github.com/repos/ghrnwjd/${ghrnwjd_repos[i]}/commits`)
+        .then((response) => response.json())    
+        .then((data) => {
+            let node = attendanceCheck(data);
+            document.getElementById("ghrnwjd").appendChild(node);
+            ghrnwjd = true; 
+        })
+        .catch((error) => {
+            console.log(`${ghrnwjd_repos[i]} 레포의 커밋은 없습니다.`)
+        });
+    }    
 }
 
 
 function junjoyAPI() {
-    fetch("https://api.github.com/repos/mmmjunjoy/mmmjunjoy/commits")
-    .then((response) => response.json())
-    .then((data) => {
-        let node = attendanceCheck(data);
-        document.getElementById("mmmjunjoy").appendChild(node);
-        mmmjunjoy = true;
-    })
-    .catch((error) => {
-        let node = document.createElement("p");
-        node.textContent = "심준보는 아직 출석하지 못했습니다.";
-        document.getElementById("mmmjunjoy").appendChild(node);
-    });
+    for(i = 0; i < mmmjunjoy_repos.length; i++ )
+    {
+        fetch(`https://api.github.com/repos/mmmjunjoy/${mmmjunjoy_repos[i]}/commits`)
+        .then((response) => response.json())
+        .then((data) => {
+            let node = attendanceCheck(data);
+            document.getElementById("mmmjunjoy").appendChild(node);
+            mmmjunjoy = true;
+        })
+        .catch((error) => {
+            console.log(`${mmmjunjoy_repos[i]} 레포의 커밋은 없습니다.`)
+        });
+    }
+    
 }
 
 function xiAPI() {
-    fetch("https://api.github.com/repos/cmsxi/cmsxi/commits")
-    .then((response) => response.json())
-    .then((data) => {
-        let node = attendanceCheck(data);
-        document.getElementById("cmsxi").appendChild(node);
-        cmsxi = true;
-    })
-    .catch((error) => {
-        let node = document.createElement("p");
-        node.textContent = "최민서는 아직 출석하지 못했습니다.";
-        document.getElementById("cmsxi").appendChild(node);
-        
-    });
+    for(i = 0; i < cmsxi_repos.length; i++ ) {
+        fetch(`https://api.github.com/repos/cmsxi/${cmsxi[i]}/commits`)
+        .then((response) => response.json())
+        .then((data) => {
+            let node = attendanceCheck(data);
+            document.getElementById("cmsxi").appendChild(node);
+            cmsxi = true;
+        })
+        .catch((error) => {
+            console.log(`${cmsxi[i]} 레포의 커밋은 없습니다.`)
+            
+        });
+    }
 }
 
 
 function noAPI() {
-    fetch("https://api.github.com/repos/erica0321/erica0321/commits")
-    .then((response) => response.json())
-    .then((data) => {
-        let node = attendanceCheck(data);
-        document.getElementById("erica0321").appendChild(node);
-        erica0321 = true;
-    })
-    .catch((error) => {
-        let node = document.createElement("p");
-        node.textContent = "노현아는 아직 출석하지 못했습니다.";
-        document.getElementById("erica0321").appendChild(node);
-    });
+    for(i = 0; i < erica0321_repos.length; i++ ) {
+        fetch(`https://api.github.com/repos/erica0321/${erica0321_repos[i]}/commits`)
+        .then((response) => response.json())
+        .then((data) => {
+            let node = attendanceCheck(data);
+            document.getElementById("erica0321").appendChild(node);
+            erica0321 = true;
+        })
+        .catch((error) => {
+            console.log(`${erica0321_repos[i]} 레포의 커밋은 없습니다.`)
+        });
+    }    
 }
 
 

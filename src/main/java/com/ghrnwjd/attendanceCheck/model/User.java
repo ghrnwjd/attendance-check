@@ -5,6 +5,7 @@ import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
 import java.sql.Timestamp;
+import java.util.List;
 
 @Getter
 @Setter
@@ -12,20 +13,18 @@ import java.sql.Timestamp;
 @AllArgsConstructor
 @Entity
 public class User {
-
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int userNum;
 
-    @Column(nullable = false)
-    private String userId;
-
-    @Column(nullable = false)
-    private String userPassword;
+    @Column
+    private String gitId;
 
     @CreationTimestamp
     private Timestamp createdDate;
 
     @Column
-    private String runTime;
+    private int cumulativeAttendance;
+
+
 }

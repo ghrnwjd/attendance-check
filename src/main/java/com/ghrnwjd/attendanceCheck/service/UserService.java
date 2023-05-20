@@ -18,17 +18,6 @@ public class UserService {
         this.userRepository = userRepository;
     }
 
-    @Transactional
-    public User login(User user) {
-        User user1 = userRepository.findByUserIdAndUserPassword(user.getUserId(), user.getUserPassword()).orElseGet(()-> {
-            return null;
-        });
 
-        return user1;
-    }
 
-    @Transactional
-    public void join(User user) {
-        userRepository.save(user);
-    }
 }
