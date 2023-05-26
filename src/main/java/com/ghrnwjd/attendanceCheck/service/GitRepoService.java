@@ -2,10 +2,11 @@ package com.ghrnwjd.attendanceCheck.service;
 
 
 import com.ghrnwjd.attendanceCheck.model.GitRepo;
+import com.ghrnwjd.attendanceCheck.model.User;
 import com.ghrnwjd.attendanceCheck.repository.GitRepoRepository;
+import com.ghrnwjd.attendanceCheck.repository.UserRepository;
 import jakarta.transaction.Transactional;
 import lombok.extern.slf4j.Slf4j;
-import org.kohsuke.github.GitHub;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import org.springframework.stereotype.Service;
@@ -15,6 +16,7 @@ import reactor.core.publisher.Mono;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.List;
 
 
 @Service
@@ -25,23 +27,37 @@ public class GitRepoService {
     @Autowired
     private GitRepoRepository gitRepoRepository;
 
+    @Autowired
+    private UserRepository userRepository;
+
 
 
     @Transactional
-    public void saveRepos(GitRepo gitRepo) {
+    public void saveRepos(String repoName, String gitId) {
+
+        GitRepo gitRepo = new GitRepo();
+        gitRepo.setRepoName(repoName);
+        gitRepo.setUser(userRepository.findByGitId(gitId).orElseGet(()-> {
+            User user = new User();
+            user.setGitId(gitId);
+            userRepository.save(user);
+            return user;
+        }));
+
         gitRepoRepository.save(gitRepo);
+
     }
 
 
 
-    public ArrayList<String> getRepos(String gitId) {
+    public void getRepos(String gitId) {
         WebClient client = WebClient.create();
-        String url = "https://api.github.com/users/" + gitId+ "/repos";
+        String url = "https://api.github.com/users/" + gitId + "/repos";
         Mono<String> stringMono = client.get()
                 .uri(url)
                 .retrieve()
                 .bodyToMono(String.class);
-        stringMono.flux().toStream().findAny()
+
         String [] jsonList = stringMono.flux().toStream().findAny().toString().split(",");
         ArrayList<String> repoList = new ArrayList<>();
         for(int i = 0; i < jsonList.length; i++) {
@@ -50,24 +66,28 @@ public class GitRepoService {
             }
         }
 
-        return repoList;
+        for(int i = 0; i < repoList.size(); i++) {
+            saveRepos(repoList.get(i), gitId);
+        }
     }
 
 
-    public ArrayList<String> getCommits() {
-        String gitId = "mmmjunjoy";
-        ArrayList <String> repoList = getRepos(gitId);
+    @Transactional
+    public ArrayList<String> getCommits(String gitId) {
 
-        for(String temp : repoList) {
-            System.out.println(temp);
-        }
+
+        List<GitRepo> repoList = gitRepoRepository.findAllByUser(userRepository.findByGitId(gitId).orElseGet(()-> {
+            System.out.println("해당 사용자를 찾을 수 없습니다.");
+            return null;
+        }));
+
         ArrayList<String> commitList = new ArrayList<>();
 
         for(int i = 0; i < repoList.size(); i++) {
 
             try {
                 WebClient client = WebClient.create();
-                String url = "https://api.github.com/repos/" + gitId + "/" + repoList.get(i) + "/commits";
+                String url = "https://api.github.com/repos/" + gitId + "/" + repoList.get(i).getRepoName() + "/commits";
 
                 Mono<String> stringMono = client.get()
                         .uri(url)
@@ -95,8 +115,8 @@ public class GitRepoService {
     }
 
 
-    public String attendanceCheck() {
-        ArrayList<String> commitList = getCommits();
+    public String attendanceCheck(String gitId) {
+        ArrayList<String> commitList = getCommits(gitId);
         for(int i = 0; i < commitList.size(); i++) {
             String date_time = commitList.get(i);
             if(addTime(date_time)) {

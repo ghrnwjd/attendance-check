@@ -3,9 +3,9 @@ package com.ghrnwjd.attendanceCheck.model;
 
 import jakarta.persistence.*;
 import lombok.*;
+import org.hibernate.annotations.ColumnDefault;
 import org.hibernate.annotations.CreationTimestamp;
 import java.sql.Timestamp;
-import java.util.List;
 
 @Getter
 @Setter
@@ -23,7 +23,7 @@ public class User {
     @CreationTimestamp
     private Timestamp createdDate;
 
-    @Column
+    @ColumnDefault("0")
     private int cumulativeAttendance;
 
 

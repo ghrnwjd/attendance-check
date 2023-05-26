@@ -1,112 +1,59 @@
 package com.ghrnwjd.attendanceCheck;
 
+import com.ghrnwjd.attendanceCheck.model.GitRepo;
+import com.ghrnwjd.attendanceCheck.model.User;
+import com.ghrnwjd.attendanceCheck.repository.GitRepoRepository;
+import com.ghrnwjd.attendanceCheck.repository.UserRepository;
 import com.ghrnwjd.attendanceCheck.service.GitRepoService;
+import com.ghrnwjd.attendanceCheck.service.UserService;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.web.reactive.function.client.WebClient;
-import reactor.core.publisher.Mono;
 
-import java.lang.reflect.Array;
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.util.ArrayList;
+import java.util.List;
 
 @SpringBootTest
 class AttendanceCheckApplicationTests {
+
+	AttendanceCheckApplicationTests(GitRepoService gitRepoService, UserService userService) {
+		this.gitRepoService = gitRepoService;
+		this.userService = userService;
+	}
 
 	@Test
 	void contextLoads() {
 	}
 
 	@Autowired
-	private GitRepoService gitRepoService;
+	private GitRepoRepository gitRepoRepository;
 
-	public ArrayList<String> getRepos(String gitId) {
-		WebClient client = WebClient.create();
-		String url = "https://api.github.com/users/" + gitId+ "/repos";
-		Mono<String> stringMono = client.get()
-				.uri(url)
-				.retrieve()
-				.bodyToMono(String.class);
+	@Autowired
+	private UserRepository userRepository;
 
-		String [] jsonList = stringMono.flux().toStream().findAny().toString().split(",");
-		ArrayList<String> repoList = new ArrayList<>();
-		for(int i = 0; i < jsonList.length; i++) {
-			if(jsonList[i].startsWith("\"name\"")) {
-				repoList.add(jsonList[i].substring(8, jsonList[i].length()-1));
-			}
-		}
-
-		return repoList;
-	}
+	private final GitRepoService gitRepoService;
+	private final UserService userService;
 
 	@Test
-	public ArrayList<String> print() {
-		String gitId = "mmmjunjoy";
-		ArrayList <String> repoList = getRepos(gitId);
 
-		for(String temp : repoList) {
-			System.out.println(temp);
-		}
-		ArrayList<String> commitList = new ArrayList<>();
-
-		for(int i = 0; i < repoList.size(); i++) {
-
-			try {
-				WebClient client = WebClient.create();
-				String url = "https://api.github.com/repos/" + gitId + "/" + repoList.get(i) + "/commits";
-
-				Mono<String> stringMono = client.get()
-						.uri(url)
-						.retrieve()
-						.bodyToMono(String.class);
-
-				String[] jsonList = stringMono.flux().toStream().findAny().toString().split(",");
-
-				for (int j = 0; j < jsonList.length; j++) {
-					if (jsonList[i].startsWith("\"date\"")) {
-						System.out.println(jsonList[j]);
-						commitList.add(jsonList[i].substring(8, jsonList[i].length() - 3));
-						break;
-					}
-				}
+	void test() {
+		List<User> users = userService.findAll();
+		List<GitRepo> repoList = null;
+		for(int j = 0; j < users.size(); j++) {
+			for(int i = 0; i < users.size(); i++) {
+				gitRepoService.getRepos(users.get(i).getGitId());
 			}
-			catch (Exception e) {
-				e.printStackTrace();
-			}
-
+			repoList = gitRepoRepository.findAllByUser(userRepository.findByGitId(users.get(j).getGitId()).orElseGet(()-> {
+				System.out.println("해당 사용자를 찾을 수 없습니다.");
+				return null;
+			}));
 		}
 
-		for(String temp:commitList ) {
-			System.out.println(temp);
+		for(GitRepo temp : repoList) {
+			System.out.println(temp.getRepoName());
 		}
 
-		return commitList;
+
+
 	}
 
-	@Test
-	public String attendanceCheck() {
-		ArrayList<String> commitList = print();
-		for(int i = 0; i < commitList.size(); i++) {
-			String date_time = commitList.get(i);
-			if(addTime(date_time)) {
-				return "오늘 출석하였습니다.";
-			}
-		}
-		return "출석하지 못하였습니다.";
-	}
-
-	public boolean addTime(String date_time) {
-		LocalDateTime localDateTime = LocalDateTime.parse(date_time);
-		localDateTime.plusHours(9);
-
-
-		if(LocalDate.now().isEqual(localDateTime.toLocalDate())) {
-			return true;
-		}
-
-		return false;
-
-	}
 }
