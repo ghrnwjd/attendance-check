@@ -26,5 +26,7 @@ public class User {
     @ColumnDefault("0")
     private int cumulativeAttendance;
 
+    @Column
+    private String state;
 
 }

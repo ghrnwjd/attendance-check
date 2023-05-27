@@ -73,7 +73,7 @@ public class GitRepoService {
 
 
     @Transactional
-    public ArrayList<String> getCommits(String gitId) {
+    public ArrayList<String> getCommits(String gitId) throws InterruptedException {
 
 
         List<GitRepo> repoList = gitRepoRepository.findAllByUser(userRepository.findByGitId(gitId).orElseGet(()-> {
@@ -83,46 +83,55 @@ public class GitRepoService {
 
         ArrayList<String> commitList = new ArrayList<>();
 
-        for(int i = 0; i < repoList.size(); i++) {
+        if(repoList != null) {
+            for(int i = 0; i < repoList.size(); i++) {
+                try {
+                    WebClient client = WebClient.create();
+                    String url = "https://api.github.com/repos/" + gitId + "/" + repoList.get(i).getRepoName() + "/commits";
 
-            try {
-                WebClient client = WebClient.create();
-                String url = "https://api.github.com/repos/" + gitId + "/" + repoList.get(i).getRepoName() + "/commits";
+                    Mono<String> stringMono = client.get()
+                            .uri(url)
+                            .retrieve()
+                            .bodyToMono(String.class);
 
-                Mono<String> stringMono = client.get()
-                        .uri(url)
-                        .retrieve()
-                        .bodyToMono(String.class);
+                    String[] jsonList = stringMono.flux().toStream().findAny().toString().split(",");
 
-                String[] jsonList = stringMono.flux().toStream().findAny().toString().split(",");
-
-                for (int j = 0; j < jsonList.length; j++) {
-                    if (jsonList[i].startsWith("\"date\"")) {
-                        System.out.println(jsonList[j]);
-                        commitList.add(jsonList[i].substring(8, jsonList[i].length() - 3));
-                        break;
+                    for (int j = 0; j < jsonList.length; j++) {
+                        if (jsonList[i].startsWith("\"date\"")) {
+//                            System.out.println(jsonList[j]);
+                            commitList.add(jsonList[i].substring(8, jsonList[i].length() - 3));
+                            break;
+                        }
                     }
                 }
-            }
-            catch (Exception e) {
-                e.printStackTrace();
+                catch (Exception e) {
+                    e.printStackTrace();
+                }
+                Thread.sleep(10 * 1000);
+                // 10초 간격으로 api를 요청하겠음.
+                // git api request 는 10 requests per minutes 임
             }
 
+            return commitList;
         }
 
+        return null;
 
-        return commitList;
     }
 
 
-    public String attendanceCheck(String gitId) {
+    public String attendanceCheck(String gitId) throws InterruptedException {
         ArrayList<String> commitList = getCommits(gitId);
-        for(int i = 0; i < commitList.size(); i++) {
-            String date_time = commitList.get(i);
-            if(addTime(date_time)) {
-                return "오늘 출석하였습니다.";
+
+        if(commitList != null) {
+            for(int i = 0; i < commitList.size(); i++) {
+                String date_time = commitList.get(i);
+                if(addTime(date_time)) {
+                    return "오늘 출석하였습니다.";
+                }
             }
         }
+
         return "출석하지 못하였습니다.";
     }
 

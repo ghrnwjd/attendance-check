@@ -3,6 +3,7 @@ package com.ghrnwjd.attendanceCheck.controller;
 import com.ghrnwjd.attendanceCheck.model.User;
 import com.ghrnwjd.attendanceCheck.service.GitRepoService;
 import com.ghrnwjd.attendanceCheck.service.UserService;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -21,18 +22,18 @@ public class UserController {
     }
 
     @GetMapping("/")
-    public String index(Model model) {
+    public String index(Model model) throws InterruptedException {
 
         List<User> users = userService.findAll();
 
         for(int i = 0; i < users.size(); i++) {
-            String gitId = users.get(i).getGitId();
-            model.addAttribute("attendanceCheck"+gitId, gitRepoService.attendanceCheck(gitId));
+            User user = users.get(i);
+            model.addAttribute("attendanceCheck"+user.getGitId(), user.getState());
         }
-
 
         return "index.html";
     }
+
 
     @GetMapping("/renew")
     public String renew() {
