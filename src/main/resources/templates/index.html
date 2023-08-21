@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LAB 426</title>
+    <style>
+    div.all {
+        width: 100%;
+        height: 900px;
+
+    }
+    div.content {
+        width: 100%;
+        height: 280px;
+
+    }
+    div.left {
+        width: 50%;
+        float: left;
+        height: 280px;
+
+    }
+    div.right {
+        width: 50%;
+        float: right;
+        height: 280px;
+
+    }
+    </style>
+</head>
+<body>
+
+<div align="center" class="all">
+
+    <img src="https://github.com/ghrnwjd/attendance-check/blob/main/images/426.jpg?raw=true" style="width: 400px; height: 150px;"/>
+    <p>매일 아침 10시, 저녁 7시에 업데이트 됩니다.</p>
+
+    <div class="content">
+        <div id="ghrnwjd" class="left">
+            <a href="https://github.com/ghrnwjd"><h3>정호영</h3></a>
+            <img src="https://ghchart.rshah.org/ghrnwjd"/>
+            <p th:text="${attendanceCheckghrnwjd}">attendance check</p>
+        </div>
+        <div id="mmmjunjoy" class="right">
+            <a href="https://github.com/mmmjunjoy"><h3>심준보</h3></a>
+            <img src="https://ghchart.rshah.org/mmmjunjoy"/>
+            <p th:text="${attendanceCheckmmmjunjoy}">attendance check</p>
+        </div>
+    </div>
+
+    <div class="content">
+        <div id="cmsxi" class="left">
+            <a href="https://github.com/cmsxi"><h3>최민서</h3></a>
+            <img src="https://ghchart.rshah.org/cmsxi"/>
+            <p th:text="${attendanceCheckcmsxi}">attendance check</p>
+        </div>
+        <div id="erica0321" class="right">
+            <a href="https://github.com/erica0321"><h3>노현아</h3></a>
+            <img src="https://ghchart.rshah.org/erica0321"/>
+            <p th:text="${attendanceCheckerica0321}">attendance check</p>
+        </div>
+    </div>
+
+    <div class="content">
+        <div id="ddanbee" class="left">
+            <a href="https://github.com/ddanddanbee"><h3>박단비</h3></a>
+            <img src="https://ghchart.rshah.org/ddanddanbee"/>
+            <p th:text="${attendanceCheckddanddanbee}">attendance check</p>
+        </div>
+        <div id="youngsu" class="right">
+            <a href="https://github.com/0su1327"><h3>나영수</h3></a>
+            <img src="https://ghchart.rshah.org/0su1327"/>
+            <p th:text="${attendanceCheck0su1327}">attendance check</p>
+        </div>
+    </div>
+
+    <p> we are in lab 426. </p>
+
+</div>
+
+</body>
+</html>
