@@ -13,6 +13,10 @@ import lombok.Setter;
 @AllArgsConstructor
 @NoArgsConstructor
 public class GitRepo {
+<<<<<<< HEAD
+=======
+
+>>>>>>> facc1e5b9e27b9e9335aaab8cfc5e84b5ac0e568
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
